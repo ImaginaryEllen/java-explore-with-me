@@ -25,13 +25,16 @@ public class StatsClient extends BaseClient {
     }
 
     public ResponseEntity<Object> get(LocalDateTime start, LocalDateTime end, String[] uris, boolean unique) {
+        StringBuilder string = new StringBuilder();
+        for (String uri : uris) {
+            string.append("uris=").append(uri).append("&");
+        }
         Map<String, Object> parameters = Map.of(
                 "start", start,
                 "end", end,
-                "uris", uris,
                 "unique", unique
         );
-        return get("/stats?start={start}&end={end}&uris={uris}&unique={unique}", parameters);
+        return get("/stats?start={start}&end={end}&" + string + "unique={unique}", parameters);
     }
 
     public ResponseEntity<Object> post(StatsDtoRequest request) {
