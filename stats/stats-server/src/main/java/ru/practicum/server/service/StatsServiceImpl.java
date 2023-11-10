@@ -37,6 +37,10 @@ public class StatsServiceImpl implements StatsService {
         List<String> uriList = new ArrayList<>();
         LocalDateTime startDate = LocalDateTime.parse(start, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         LocalDateTime endDate = LocalDateTime.parse(end, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+
+        if (startDate.isAfter(endDate)) {
+            throw new IllegalArgumentException("Incorrect dates: end cannot be earlier then start");
+        }
         if (uris != null) {
             uriList = Arrays.stream(uris).collect(Collectors.toList());
         }
