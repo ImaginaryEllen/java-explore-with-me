@@ -9,6 +9,7 @@ import ru.practicum.ewm.model.enums.ActionUserType;
 @Setter
 public class UpdateEventUserRequest extends UpdateEvent {
     private ActionUserType stateAction;
+
     public UpdateEventUserRequest(String annotation, Long category, String description, String eventDate,
                                   Location location, Boolean paid, Long participantLimit, Boolean requestModeration,
                                   ActionUserType stateAction, String title) {

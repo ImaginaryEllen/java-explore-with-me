@@ -46,16 +46,12 @@ public class ErrorHandler {
                 HttpStatus.CONFLICT.toString(), LocalDateTime.now());
     }
 
-    @ExceptionHandler(
-            {
-                    ConstraintViolationException.class,
-                    MethodArgumentNotValidException.class,
-                    ValidationException.class,
-                    MissingRequestValueException.class,
-                    IllegalArgumentException.class,
-                    DataIntegrityViolationException.class
-            }
-    )
+    @ExceptionHandler({ConstraintViolationException.class,
+            MethodArgumentNotValidException.class,
+            ValidationException.class,
+            MissingRequestValueException.class,
+            IllegalArgumentException.class,
+            DataIntegrityViolationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiError handlerException(final Exception e) {
         log.warn("Error: ", e);
