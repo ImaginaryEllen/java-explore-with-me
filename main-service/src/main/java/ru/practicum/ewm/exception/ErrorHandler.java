@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -46,12 +45,23 @@ public class ErrorHandler {
                 HttpStatus.CONFLICT.toString(), LocalDateTime.now());
     }
 
-    @ExceptionHandler({ConstraintViolationException.class,
-            MethodArgumentNotValidException.class,
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiError handlerViolationException(final DataIntegrityViolationException e) {
+        log.warn("Error: ", e);
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        e.printStackTrace(pw);
+        String stackTrace = sw.toString();
+        return new ApiError(List.of(stackTrace), e.getMessage(),
+                "Integrity constraint has been violated.",
+                HttpStatus.CONFLICT.toString(), LocalDateTime.now());
+    }
+
+    @ExceptionHandler({MethodArgumentNotValidException.class,
             ValidationException.class,
             MissingRequestValueException.class,
-            IllegalArgumentException.class,
-            DataIntegrityViolationException.class})
+            IllegalArgumentException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiError handlerException(final Exception e) {
         log.warn("Error: ", e);
