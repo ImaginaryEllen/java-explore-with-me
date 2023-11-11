@@ -44,9 +44,4 @@ public class EventPublicParam implements Timespan {
         this.from = 0;
         this.size = 10;
     }
-
-//    public EventPublicParam() {
-//        this.from = 0;
-//        this.size = 10;
-//    }
 }
