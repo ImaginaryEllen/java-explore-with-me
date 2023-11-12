@@ -10,6 +10,7 @@ import ru.practicum.ewm.model.enums.StateType;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "events")
@@ -70,4 +71,7 @@ public class Event {
     @Length(min = 3, max = 120)
     private String title;
     private Long views;
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "like_id", updatable = false, insertable = false)
+    private List<Like> likes;
 }

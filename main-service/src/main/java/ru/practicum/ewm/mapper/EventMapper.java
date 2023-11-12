@@ -2,6 +2,7 @@ package ru.practicum.ewm.mapper;
 
 import lombok.experimental.UtilityClass;
 import ru.practicum.ewm.dto.event.EventFullDto;
+import ru.practicum.ewm.dto.event.EventLikeDto;
 import ru.practicum.ewm.dto.event.EventRequestDto;
 import ru.practicum.ewm.dto.event.EventShortDto;
 import ru.practicum.ewm.model.Category;
@@ -11,6 +12,7 @@ import ru.practicum.ewm.model.User;
 import ru.practicum.ewm.model.enums.StateType;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 @UtilityClass
 public class EventMapper {
@@ -60,6 +62,20 @@ public class EventMapper {
         event.setRequestModeration(requestDto.getRequestModeration() != null ? requestDto.getRequestModeration() : Boolean.TRUE);
         event.setState(StateType.PENDING);
         event.setTitle(requestDto.getTitle());
+        event.setLikes(new ArrayList<>());
         return event;
+    }
+
+    public static EventLikeDto toEventLikeDto(Event event) {
+        EventLikeDto dto = new EventLikeDto();
+        dto.setId(event.getId());
+        dto.setCategoryDto(CategoryMapper.toCategoryDto(event.getCategory()));
+        dto.setAnnotation(event.getAnnotation());
+        dto.setLocation(event.getLocation());
+        dto.setEventDate(event.getEventDate());
+        dto.setTitle(event.getTitle());
+        dto.setLikes(event.getLikes().stream().filter(like -> like.getLikeEvent().equals(Boolean.TRUE)).count());
+        dto.setDislikes(event.getLikes().stream().filter(like -> like.getLikeEvent().equals(Boolean.FALSE)).count());
+        return dto;
     }
 }

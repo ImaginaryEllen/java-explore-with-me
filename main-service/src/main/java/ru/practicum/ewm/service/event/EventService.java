@@ -4,6 +4,7 @@ import org.springframework.data.domain.Pageable;
 import ru.practicum.ewm.dto.event.*;
 import ru.practicum.ewm.dto.event.param.EventAdminParam;
 import ru.practicum.ewm.dto.event.param.EventPublicParam;
+import ru.practicum.ewm.dto.event.param.EventRatingParam;
 
 import java.util.List;
 
@@ -23,4 +24,8 @@ public interface EventService {
     List<EventShortDto> getAllEventsByPublic(EventPublicParam param);
 
     EventFullDto getEventByIdByPublic(Long eventId);
+
+    EventLikeDto getEventRatingById(Long eventId);
+
+    List<EventLikeDto> getEventsRating(EventRatingParam param);
 }

@@ -1,0 +1,384 @@
+{
+	"info": {
+		"_postman_id": "766bab6a-b59c-4d81-b916-65f8191e4fe6",
+		"name": "feature",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27733978"
+	},
+	"item": [
+		{
+			"name": "Добавление оценки(like/dislike) мероприятию от текущего пользователя",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Ответ должен содержать код статуса 201 и данные в формате json\", function () {\r",
+							"    pm.response.to.have.status(201);  \r",
+							"    pm.response.to.be.withBody;\r",
+							"    pm.response.to.be.json;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"event\": 1,\r\n    \"eventLike\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/users/:userId/likes",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						":userId",
+						"likes"
+					],
+					"variable": [
+						{
+							"key": "userId",
+							"value": "{{uid}}",
+							"description": "(Required) id текущего пользователя"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Изменение оценки мероприятия от текущего пользователя",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function () {\r",
+							"    pm.response.to.be.ok;    \r",
+							"    pm.response.to.be.withBody;\r",
+							"    pm.response.to.be.json;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/users/:userId/likes/:likeId?like=true",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						":userId",
+						"likes",
+						":likeId"
+					],
+					"query": [
+						{
+							"key": "like",
+							"value": "true"
+						}
+					],
+					"variable": [
+						{
+							"key": "userId",
+							"value": "{{uid}}",
+							"description": "(Required) id текущего пользователя"
+						},
+						{
+							"key": "likeId",
+							"value": "{{lid}}",
+							"description": "(Required) id текущей оценки"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Поиск оценок текущего пользователя с возможностью фильтрации",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function () {\r",
+							"    pm.response.to.be.ok;    \r",
+							"    pm.response.to.be.withBody;\r",
+							"    pm.response.to.be.json;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/users/:userId/likes?from=0&size=10",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						":userId",
+						"likes"
+					],
+					"query": [
+						{
+							"key": "like",
+							"value": "true",
+							"description": "Поиск оценок пользователя (like-true/dislike-false)",
+							"disabled": true
+						},
+						{
+							"key": "from",
+							"value": "0",
+							"description": "Количество оценок, которые нужно пропустить для формирования текущего набора"
+						},
+						{
+							"key": "size",
+							"value": "10",
+							"description": "Количество оценок в наборе"
+						}
+					],
+					"variable": [
+						{
+							"key": "userId",
+							"value": "{{uid}}",
+							"description": "(Required) id текущего пользователя"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Получение рейтинга мероприятий с возможностью фильтрации(по умолчанию фильтрует топ по количеству likes)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function () {\r",
+							"    pm.response.to.be.ok;    \r",
+							"    pm.response.to.be.withBody;\r",
+							"    pm.response.to.be.json;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/events/ratings?from=0&size=10",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"events",
+						"ratings"
+					],
+					"query": [
+						{
+							"key": "category",
+							"value": "1",
+							"description": "Идентификатор категории по которой будет вестись поиск",
+							"disabled": true
+						},
+						{
+							"key": "paid",
+							"value": "false",
+							"description": "Поиск только платных/бесплатных событий",
+							"disabled": true
+						},
+						{
+							"key": "rangeStart",
+							"value": "2022-01-06%2013%3A30%3A38",
+							"description": "Дата и время не раньше которых должно произойти событие",
+							"disabled": true
+						},
+						{
+							"key": "rangeEnd",
+							"value": "2097-09-06%2013%3A30%3A38",
+							"description": "Дата и время не позже которых должно произойти событие",
+							"disabled": true
+						},
+						{
+							"key": "onlyAvailable",
+							"value": "false",
+							"description": "Только события у которых не исчерпан лимит запросов на участие",
+							"disabled": true
+						},
+						{
+							"key": "sort",
+							"value": "BY_LIKES_COUNT",
+							"description": "Вариант сортировки: по количеству лайков или по количеству дизлайков",
+							"disabled": true
+						},
+						{
+							"key": "from",
+							"value": "0",
+							"description": "Количество событий, которые нужно пропустить для формирования текущего набора"
+						},
+						{
+							"key": "size",
+							"value": "10"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Получение оценок  мероприятия по ID",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function () {\r",
+							"    pm.response.to.be.ok;    \r",
+							"    pm.response.to.be.withBody;\r",
+							"    pm.response.to.be.json;\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/events/:eventId/ratings",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"events",
+						":eventId",
+						"ratings"
+					],
+					"variable": [
+						{
+							"key": "eventId",
+							"value": "{{eid}}",
+							"description": "(Required) id мероприятия"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Удаление оценки текущего пользователя",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Ответ должен содержать код статуса 204\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/users/:userId/likes/:likeId",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						":userId",
+						"likes",
+						":likeId"
+					],
+					"variable": [
+						{
+							"key": "userId",
+							"value": "{{uid}}",
+							"description": "(Required) id текущего пользователя"
+						},
+						{
+							"key": "likeId",
+							"value": "{{lid}}",
+							"description": "(Required) id текущей оценки"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "uid",
+			"value": "1"
+		},
+		{
+			"key": "lid",
+			"value": "1"
+		},
+		{
+			"key": "eid",
+			"value": "1"
+		}
+	]
+}
