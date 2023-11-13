@@ -12,6 +12,7 @@ import ru.practicum.client.StatsClient;
 import ru.practicum.ewm.dto.event.*;
 import ru.practicum.ewm.dto.event.param.EventAdminParam;
 import ru.practicum.ewm.dto.event.param.EventPublicParam;
+import ru.practicum.ewm.dto.event.param.EventRatingParam;
 import ru.practicum.ewm.exception.ConflictException;
 import ru.practicum.ewm.exception.NotFoundException;
 import ru.practicum.ewm.mapper.EventMapper;
@@ -21,10 +22,7 @@ import ru.practicum.ewm.repository.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -233,6 +231,52 @@ public class EventServiceImpl implements EventService {
         }
         EventFullDto dto = EventMapper.toEventFullDto(event);
         return setFullDto(dto);
+    }
+
+    @Override
+    public List<EventLikeDto> getEventsRating(EventRatingParam param) {
+        Pageable page = PageRequest.of(param.getFrom() > 0 ? param.getFrom() / param.getSize() : 0, param.getSize());
+
+        QEvent qEvent = QEvent.event;
+        List<BooleanExpression> expressions = new ArrayList<>();
+
+        if (param.getCategory() != null) {
+            expressions.add(qEvent.category.id.eq(param.getCategory()));
+        }
+
+        if (param.getPaid() != null) {
+            expressions.add(qEvent.paid.eq(param.getPaid()));
+        }
+
+        if (param.getRangeEnd() != null && param.getRangeStart() != null) {
+            if (param.getRangeStart().isAfter(param.getRangeEnd())) {
+                throw new IllegalArgumentException("Incorrect dates");
+            }
+            expressions.add(qEvent.eventDate.after(param.getRangeStart())
+                    .and(qEvent.eventDate.before(param.getRangeEnd())));
+        }
+
+        Optional<BooleanExpression> predicate = expressions.stream().reduce(BooleanExpression::and);
+        List<Event> events = predicate.map(booleanExpression -> eventRepository.findAll(booleanExpression, page).toList())
+                .orElseGet(() -> eventRepository.findAll(page).toList());
+
+        List<EventLikeDto> likeDtoList = events.stream()
+                .map(EventMapper::toEventLikeDto)
+                .collect(Collectors.toList());
+
+        if (param.getSort() != null) {
+            if (param.getSort().equals(SortLikeType.BY_DISLIKES_COUNT)) {
+                return likeDtoList.stream().sorted(Comparator.comparing(EventLikeDto::getDislikes)).collect(Collectors.toList());
+            }
+        }
+        return likeDtoList.stream().sorted(Comparator.comparing(EventLikeDto::getLikes)).collect(Collectors.toList());
+    }
+
+    @Override
+    public EventLikeDto getEventRatingById(Long eventId) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " was not found"));
+        return EventMapper.toEventLikeDto(event);
     }
 
     private EventShortDto setShortDto(EventShortDto shortDto) {
