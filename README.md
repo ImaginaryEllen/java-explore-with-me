@@ -1,4 +1,3 @@
-
 <div id="header" align="center">
 
 # Explore With Me 🌍
